@@ -1,5 +1,6 @@
 # Site Web de Gestion de Café - Projet Terminé
 
+https://coffeebouziri.netlify.app/
 J'ai créé un site web complet en français pour la gestion d'un café, en utilisant uniquement HTML, CSS et JavaScript avec une simulation de MongoDB via IndexedDB pour le stockage côté client. Le site est entièrement fonctionnel et prêt à être utilisé.
 
 ## Fonctionnalités implémentées
