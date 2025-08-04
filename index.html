@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Café Bouziri - Accueil</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <h1>Café Bouziri</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html" class="active"><i class="fas fa-home"></i> Accueil</a></li>
+                <li><a href="pages/commandes.html"><i class="fas fa-shopping-cart"></i> Commandes</a></li>
+                <li><a href="pages/factures.html"><i class="fas fa-file-invoice"></i> Factures</a></li>
+                <li><a href="pages/stock.html"><i class="fas fa-warehouse"></i> Stock</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h2>Bienvenue au Café Bouziri</h2>
+                <p>Système de gestion pour votre café préféré</p>
+                <a href="pages/commandes.html" class="btn">Nouvelle Commande</a>
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="feature-card">
+                <i class="fas fa-shopping-cart"></i>
+                <h3>Gestion des Commandes</h3>
+                <p>Créez, modifiez et suivez les commandes des clients</p>
+                <a href="pages/commandes.html" class="btn-secondary">Gérer les commandes</a>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-file-invoice"></i>
+                <h3>Facturation</h3>
+                <p>Générez et consultez les factures des clients</p>
+                <a href="pages/factures.html" class="btn-secondary">Voir les factures</a>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-warehouse"></i>
+                <h3>Gestion du Stock</h3>
+                <p>Suivez et gérez votre inventaire de produits</p>
+                <a href="pages/stock.html" class="btn-secondary">Gérer le stock</a>
+            </div>
+        </section>
+
+        <section class="stats">
+            <h2>Tableau de bord</h2>
+            <div class="stats-container">
+                <div class="stat-card">
+                    <h3>Commandes du jour</h3>
+                    <p class="stat-number" id="commandes-jour">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Produits en stock</h3>
+                    <p class="stat-number" id="produits-stock">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Chiffre d'affaires</h3>
+                    <p class="stat-number" id="chiffre-affaires">0 €</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Café Bouziri</h3>
+                <p>Système de gestion pour café</p>
+            </div>
+            <div class="footer-section">
+                <h3>Liens rapides</h3>
+                <ul>
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="pages/commandes.html">Commandes</a></li>
+                    <li><a href="pages/factures.html">Factures</a></li>
+                    <li><a href="pages/stock.html">Stock</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Fontaine</p>
+                <p><i class="fas fa-phone"></i> +33 7 23 45 67 89</p>
+                <p><i class="fas fa-envelope"></i> contact@cafebouziri.fr</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Café Bouziri. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/db.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>

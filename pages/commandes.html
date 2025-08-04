@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Café Bouziri - Commandes</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <h1>Café Bouziri</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="../index.html"><i class="fas fa-home"></i> Accueil</a></li>
+                <li><a href="commandes.html" class="active"><i class="fas fa-shopping-cart"></i> Commandes</a></li>
+                <li><a href="factures.html"><i class="fas fa-file-invoice"></i> Factures</a></li>
+                <li><a href="stock.html"><i class="fas fa-warehouse"></i> Stock</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="card mt-3">
+            <div class="card-header">
+                <h2 class="card-title">Gestion des Commandes</h2>
+                <button id="new-order-btn" class="btn"><i class="fas fa-plus"></i> Nouvelle Commande</button>
+            </div>
+
+            <div class="alert alert-success" id="success-alert" style="display: none;">
+                Opération réussie!
+            </div>
+
+            <div class="table-container">
+                <table id="orders-table">
+                    <thead>
+                        <tr>
+                            <th>N° Commande</th>
+                            <th>Date</th>
+                            <th>Client</th>
+                            <th>Montant</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-list">
+                        <!-- Les commandes seront ajoutées ici dynamiquement -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal pour ajouter/modifier une commande -->
+    <div id="order-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <h3 id="modal-title">Nouvelle Commande</h3>
+            </div>
+            <form id="order-form">
+                <input type="hidden" id="order-id">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="client-name">Nom du Client</label>
+                        <input type="text" id="client-name" placeholder="Facultatif" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="order-date">Date</label>
+                        <input type="date" id="order-date" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Produits</label>
+                    <div id="products-container">
+                        <!-- Les produits seront ajoutés ici dynamiquement -->
+                    </div>
+                    <button type="button" id="add-product-btn" class="btn-secondary mt-2">
+                        <i class="fas fa-plus"></i> Ajouter un produit
+                    </button>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="order-status">Statut</label>
+                        <select id="order-status" class="form-control" required>
+                            <option value="En attente">En attente</option>
+                            <option value="En préparation">En préparation</option>
+                            <option value="Terminée">Terminée</option>
+                            <option value="Livrée">Livrée</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="order-total">Total</label>
+                        <input type="text" id="order-total" class="form-control" readonly>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="order-notes">Notes</label>
+                    <textarea id="order-notes" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="cancel-btn">Annuler</button>
+                    <button type="submit" class="btn">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Template pour les lignes de produits -->
+    <template id="product-row-template">
+        <div class="form-row product-row">
+            <div class="form-group">
+                <label>Produit</label>
+                <select class="form-control product-select" required></select>
+            </div>
+            <div class="form-group">
+                <label>Quantité</label>
+                <input type="number" class="form-control product-quantity" min="1" value="1" required>
+            </div>
+            <div class="form-group">
+                <label>Prix unitaire</label>
+                <input type="number" class="form-control product-price" readonly>
+            </div>
+            <div class="form-group">
+                <label>Sous-total</label>
+                <input type="number" class="form-control product-subtotal" readonly>
+            </div>
+            <div class="form-group">
+                <label>&nbsp;</label>
+                <button type="button" class="btn-danger remove-product-btn">Supprimer</button>
+            </div>
+        </div>
+    </template>
+
+    <!-- Modal de confirmation de suppression -->
+    <div id="confirm-delete-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirmer la suppression</h3>
+            </div>
+            <p>Êtes-vous sûr de vouloir supprimer cette commande?</p>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" id="cancel-delete-btn">Annuler</button>
+                <button type="button" class="btn-danger" id="confirm-delete-btn">Supprimer</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Café Bouziri</h3>
+                <p>Système de gestion pour café</p>
+            </div>
+            <div class="footer-section">
+                <h3>Liens rapides</h3>
+                <ul>
+                    <li><a href="../index.html">Accueil</a></li>
+                    <li><a href="commandes.html">Commandes</a></li>
+                    <li><a href="factures.html">Factures</a></li>
+                    <li><a href="stock.html">Stock</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p><i class="fas fa-map-marker-alt"></i> 123 Avenue des Champs-Élysées, Paris</p>
+                <p><i class="fas fa-phone"></i> +33 1 23 45 67 89</p>
+                <p><i class="fas fa-envelope"></i> contact@cafeBouziri.fr</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 Café Bouziri. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/db.js"></script>
+    <script src="../js/commandes.js"></script>
+</body>
+
+</html>

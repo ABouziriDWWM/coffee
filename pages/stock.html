@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Café Bouziri - Stock</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <h1>Café Bouziri</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="../index.html"><i class="fas fa-home"></i> Accueil</a></li>
+                <li><a href="commandes.html"><i class="fas fa-shopping-cart"></i> Commandes</a></li>
+                <li><a href="factures.html"><i class="fas fa-file-invoice"></i> Factures</a></li>
+                <li><a href="stock.html" class="active"><i class="fas fa-warehouse"></i> Stock</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="card mt-3">
+            <div class="card-header">
+                <h2 class="card-title">Gestion du Stock</h2>
+                <div>
+                    <button id="add-product-btn" class="btn"><i class="fas fa-plus"></i> Ajouter un Produit</button>
+                    <button id="import-products-btn" class="btn-secondary"><i class="fas fa-file-import"></i>
+                        Importer</button>
+                    <button id="export-products-btn" class="btn-secondary"><i class="fas fa-file-export"></i>
+                        Exporter</button>
+                </div>
+            </div>
+
+            <div class="alert alert-success" id="success-alert" style="display: none;">
+                Opération réussie!
+            </div>
+
+            <div class="form-row mb-3">
+                <div class="form-group">
+                    <label for="filter-category">Catégorie</label>
+                    <select id="filter-category" class="form-control">
+                        <option value="">Toutes les catégories</option>
+                        <option value="Boissons chaudes">Boissons chaudes</option>
+                        <option value="Boissons froides">Boissons froides</option>
+                        <option value="Pâtisseries">Pâtisseries</option>
+                        <option value="Snacks">Snacks</option>
+                        <option value="Autres">Autres</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filter-stock">Stock</label>
+                    <select id="filter-stock" class="form-control">
+                        <option value="">Tous les niveaux</option>
+                        <option value="low">Stock bas</option>
+                        <option value="out">Rupture de stock</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="search-product">Recherche</label>
+                    <input type="text" id="search-product" class="form-control" placeholder="Nom du produit">
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button id="filter-btn" class="btn w-100">Filtrer</button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table id="products-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Catégorie</th>
+                            <th>Prix</th>
+                            <th>Stock</th>
+                            <th>Seuil d'alerte</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="products-list">
+                        <!-- Les produits seront ajoutés ici dynamiquement -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="card mt-3">
+            <div class="card-header">
+                <h2 class="card-title">Historique des Mouvements de Stock</h2>
+            </div>
+            <div class="table-container">
+                <table id="stock-history-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Produit</th>
+                            <th>Type</th>
+                            <th>Quantité</th>
+                            <th>Utilisateur</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stock-history-list">
+                        <!-- L'historique sera ajouté ici dynamiquement -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal pour ajouter/modifier un produit -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <h3 id="modal-title">Ajouter un Produit</h3>
+            </div>
+            <form id="product-form">
+                <input type="hidden" id="product-id">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="product-name">Nom du Produit</label>
+                        <input type="text" id="product-name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-category">Catégorie</label>
+                        <select id="product-category" class="form-control" required>
+                            <option value="Boissons chaudes">Boissons chaudes</option>
+                            <option value="Boissons froides">Boissons froides</option>
+                            <option value="Pâtisseries">Pâtisseries</option>
+                            <option value="Snacks">Snacks</option>
+                            <option value="Autres">Autres</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="product-price">Prix (€)</label>
+                        <input type="number" id="product-price" class="form-control" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-cost">Coût d'achat (€)</label>
+                        <input type="number" id="product-cost" class="form-control" step="0.01" min="0" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="product-stock">Stock actuel</label>
+                        <input type="number" id="product-stock" class="form-control" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-threshold">Seuil d'alerte</label>
+                        <input type="number" id="product-threshold" class="form-control" min="0" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="product-description">Description</label>
+                    <textarea id="product-description" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="cancel-btn">Annuler</button>
+                    <button type="submit" class="btn">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal pour ajuster le stock -->
+    <div id="adjust-stock-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <h3>Ajuster le Stock</h3>
+            </div>
+            <form id="adjust-stock-form">
+                <input type="hidden" id="adjust-product-id">
+                <div class="form-group">
+                    <label for="product-name-display">Produit</label>
+                    <input type="text" id="product-name-display" class="form-control" readonly>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="current-stock-display">Stock actuel</label>
+                        <input type="number" id="current-stock-display" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="adjustment-type">Type d'ajustement</label>
+                        <select id="adjustment-type" class="form-control" required>
+                            <option value="add">Ajouter au stock</option>
+                            <option value="remove">Retirer du stock</option>
+                            <option value="set">Définir le stock</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="adjustment-quantity">Quantité</label>
+                    <input type="number" id="adjustment-quantity" class="form-control" min="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="adjustment-reason">Raison</label>
+                    <select id="adjustment-reason" class="form-control" required>
+                        <option value="Réception">Réception de marchandise</option>
+                        <option value="Inventaire">Ajustement d'inventaire</option>
+                        <option value="Perte">Perte/Casse</option>
+                        <option value="Périmé">Produit périmé</option>
+                        <option value="Autre">Autre</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="adjustment-notes">Notes</label>
+                    <textarea id="adjustment-notes" class="form-control" rows="2"></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="cancel-adjust-btn">Annuler</button>
+                    <button type="submit" class="btn">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de confirmation de suppression -->
+    <div id="confirm-delete-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirmer la suppression</h3>
+            </div>
+            <p>Êtes-vous sûr de vouloir supprimer ce produit?</p>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" id="cancel-delete-btn">Annuler</button>
+                <button type="button" class="btn-danger" id="confirm-delete-btn">Supprimer</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Café Bouziri</h3>
+                <p>Système de gestion pour café</p>
+            </div>
+            <div class="footer-section">
+                <h3>Liens rapides</h3>
+                <ul>
+                    <li><a href="../index.html">Accueil</a></li>
+                    <li><a href="commandes.html">Commandes</a></li>
+                    <li><a href="factures.html">Factures</a></li>
+                    <li><a href="stock.html">Stock</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p><i class="fas fa-map-marker-alt"></i> 123 Avenue des Champs-Élysées, Paris</p>
+                <p><i class="fas fa-phone"></i> +33 1 23 45 67 89</p>
+                <p><i class="fas fa-envelope"></i> contact@cafeBouziri.fr</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 Café Bouziri. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/db.js"></script>
+    <script src="../js/stock.js"></script>
+</body>
+
+</html>

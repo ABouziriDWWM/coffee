@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Café Bouziri - Factures</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <h1>Café Bouziri</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="../index.html"><i class="fas fa-home"></i> Accueil</a></li>
+                <li><a href="commandes.html"><i class="fas fa-shopping-cart"></i> Commandes</a></li>
+                <li><a href="factures.html" class="active"><i class="fas fa-file-invoice"></i> Factures</a></li>
+                <li><a href="stock.html"><i class="fas fa-warehouse"></i> Stock</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="card mt-3">
+            <div class="card-header">
+                <h2 class="card-title">Gestion des Factures</h2>
+                <div>
+                    <button id="generate-invoice-btn" class="btn"><i class="fas fa-plus"></i> Générer une
+                        Facture</button>
+                    <button id="export-invoices-btn" class="btn-secondary"><i class="fas fa-file-export"></i>
+                        Exporter</button>
+                </div>
+            </div>
+
+            <div class="alert alert-success" id="success-alert" style="display: none;">
+                Opération réussie!
+            </div>
+
+            <div class="form-row mb-3">
+                <div class="form-group">
+                    <label for="filter-date-start">Date de début</label>
+                    <input type="date" id="filter-date-start" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="filter-date-end">Date de fin</label>
+                    <input type="date" id="filter-date-end" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="filter-client">Client</label>
+                    <input type="text" id="filter-client" class="form-control" placeholder="Nom du client">
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button id="filter-btn" class="btn w-100">Filtrer</button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table id="invoices-table">
+                    <thead>
+                        <tr>
+                            <th>N° Facture</th>
+                            <th>Date</th>
+                            <th>Client</th>
+                            <th>Montant</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="invoices-list">
+                        <!-- Les factures seront ajoutées ici dynamiquement -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal pour générer une facture -->
+    <div id="invoice-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <h3 id="modal-title">Générer une Facture</h3>
+            </div>
+            <form id="invoice-form">
+                <input type="hidden" id="invoice-id">
+                <div class="form-group">
+                    <label for="order-select">Sélectionner une commande</label>
+                    <select id="order-select" class="form-control" required>
+                        <option value="">-- Choisir une commande --</option>
+                        <!-- Les commandes seront ajoutées ici dynamiquement -->
+                    </select>
+                </div>
+
+                <div id="order-details" style="display: none;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="invoice-client">Client</label>
+                            <input type="text" id="invoice-client" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="invoice-date">Date de facturation</label>
+                            <input type="date" id="invoice-date" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Produits</label>
+                        <div class="table-container">
+                            <table id="invoice-products">
+                                <thead>
+                                    <tr>
+                                        <th>Produit</th>
+                                        <th>Quantité</th>
+                                        <th>Prix unitaire</th>
+                                        <th>Sous-total</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="invoice-products-list">
+                                    <!-- Les produits seront ajoutés ici dynamiquement -->
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="3" class="text-right"><strong>Total:</strong></td>
+                                        <td id="invoice-total">0.00 €</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="invoice-notes">Notes</label>
+                        <textarea id="invoice-notes" class="form-control" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="invoice-status">Statut</label>
+                        <select id="invoice-status" class="form-control" required>
+                            <option value="En attente">En attente</option>
+                            <option value="Payée">Payée</option>
+                            <option value="Annulée">Annulée</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="cancel-btn">Annuler</button>
+                    <button type="submit" class="btn">Générer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal pour afficher une facture -->
+    <div id="view-invoice-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div id="invoice-preview">
+                <div class="text-center mb-3">
+                    <h2>Café Bouziri</h2>
+                    <p>123 Fontiane</p>
+                    <p>Tél: +33 7 23 45 67 89 | Email: contact@cafeBouziri.fr</p>
+                </div>
+
+                <div class="d-flex justify-between mb-3">
+                    <div>
+                        <h3>FACTURE</h3>
+                        <p><strong>N° Facture:</strong> <span id="preview-invoice-number"></span></p>
+                        <p><strong>Date:</strong> <span id="preview-invoice-date"></span></p>
+                        <p><strong>Statut:</strong> <span id="preview-invoice-status"></span></p>
+                    </div>
+                    <div>
+                        <h4>Client</h4>
+                        <p id="preview-client-name"></p>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Produit</th>
+                                <th>Quantité</th>
+                                <th>Prix unitaire</th>
+                                <th>Sous-total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="preview-products-list">
+                            <!-- Les produits seront ajoutés ici dynamiquement -->
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" class="text-right"><strong>Total:</strong></td>
+                                <td id="preview-total">0.00 €</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="mt-3">
+                    <h4>Notes</h4>
+                    <p id="preview-notes"></p>
+                </div>
+
+                <div class="text-center mt-3">
+                    <p>Merci pour votre confiance!</p>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" id="close-preview-btn">Fermer</button>
+                <button type="button" class="btn" id="print-invoice-btn"><i class="fas fa-print"></i> Imprimer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmation de suppression -->
+    <div id="confirm-delete-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirmer la suppression</h3>
+            </div>
+            <p>Êtes-vous sûr de vouloir supprimer cette facture?</p>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" id="cancel-delete-btn">Annuler</button>
+                <button type="button" class="btn-danger" id="confirm-delete-btn">Supprimer</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Café Bouziri</h3>
+                <p>Système de gestion pour café</p>
+            </div>
+            <div class="footer-section">
+                <h3>Liens rapides</h3>
+                <ul>
+                    <li><a href="../index.html">Accueil</a></li>
+                    <li><a href="commandes.html">Commandes</a></li>
+                    <li><a href="factures.html">Factures</a></li>
+                    <li><a href="stock.html">Stock</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p><i class="fas fa-map-marker-alt"></i> 123 Avenue des Champs-Élysées, Paris</p>
+                <p><i class="fas fa-phone"></i> +33 1 23 45 67 89</p>
+                <p><i class="fas fa-envelope"></i> contact@cafeBouziri.fr</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 Café Bouziri. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/db.js"></script>
+    <script src="../js/factures.js"></script>
+</body>
+
+</html>
